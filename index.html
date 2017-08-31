@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta name="description" content="">
+    <link rel="stylesheet" type="text/css" href="./main.css">
+  </head>
+  <body>
+    <header>
+      <main>
+        <div class='panel' id='search-main'>
+          <form id='gen-search-form'>
+            <input id='search-input'></input>
+            <button type="submit" id='gen-search-btn'>Search</button>
+            <button type="button" id='get-adv-search'>Adv Search</button>
+          </form>
+          <div id='recipe-of-the-day'>
+          </div>
+        </div>
+        <div class='panel' id='adv-search'>
+        
+        </div>
+        <div class='panel' id='search-results'>
+          <form id='adv-search-form'>
+            <input id='add-ingredient'></input>
+            <button type="button" id="add-ingredient-button">Add</button>
+            <button type="button" id="exclude-ingredient-button">Exclude</button>
+            <button type="submit" id="submit-adv-search-button">Go Search</button>           
+          <div id='results-container'>
+          </div>
+          <div id="results-button-ctr">
+            <button type="button" id="results-filter">Next</button>
+            <button type="button" id="results-sort">Next</button>
+            <button type="button" id="results-new-search">Next</button>
+            <button type="button" id="results-prev-btn">Next</button>
+            <button type="button" id="results-next-btn">Next</button>
+          </div>
+        </div>
+      </main>
+    </header>
+  </body>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="./app.js"></script>
+    <script src="./render.js"></script>
+  </body>
+</html>
