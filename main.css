@@ -1,3 +1,17 @@
 .panel {
   margin-bottom: 100px;
 }
+
+#recipe-of-the-day {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 50%;
+}
+#recipe-of-the-day img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.hidden {
+  display: none;
+}

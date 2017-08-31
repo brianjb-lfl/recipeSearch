@@ -8,39 +8,58 @@
   <body>
     <header>
       <main>
+
         <div class='panel' id='search-main'>
+          <h1>Search</h1>
           <form id='gen-search-form'>
             <input id='search-input'></input>
             <button type="submit" id='gen-search-btn'>Search</button>
             <button type="button" id='get-adv-search'>Adv Search</button>
           </form>
           <div id='recipe-of-the-day'>
+            <img src="http://s.eatthis-cdn.com/media/images/ext/842849976/greasy-fast-food.jpg"/>
           </div>
         </div>
-        <div class='panel' id='adv-search'>
-        
-        </div>
-        <div class='panel' id='search-results'>
+
+        <div class='panel hidden' id='adv-search'>
+          <h1>Advanced Search</h1>
           <form id='adv-search-form'>
-            <input id='add-ingredient'></input>
-            <button type="button" id="add-ingredient-button">Add</button>
-            <button type="button" id="exclude-ingredient-button">Exclude</button>
-            <button type="submit" id="submit-adv-search-button">Go Search</button>           
+              <input id='adv-search-input-term'>
+                <button type="button" id="add-ingredient-button">Add</button><!--activate later-->
+                <button type="button" id="exclude-ingredient-button">Exclude</button>
+              </input>
+              <select name="adv-search-diet" id='adv-search-input-diet'><label for="adv-search-diet">Diet</label>
+                    <option>Balanced</option>
+                    <option>High-Fiber</option>
+                    <option>High-Protein</option>
+              </select>
+              <select name="adv-search-health" id='adv-search-input-health'><label for="adv-search-health">Health</label>
+                <option>Peanut-Free</option>
+                <option>Gluten-Free</option>
+                <option>Paleo</option>
+              </select>
+              <input id='adv-search-input-cals'><label for="adv-search-input-cals">Calories</label></input>
+              <button type="submit" id="submit-adv-search-button">Go Search</button>   
+          </form>
+        </div>
+
+        <div class='panel hidden' id='search-results'>
+            <div id="results-button-ctr">
+              <button type="button" id="results-filter">Filter</button>
+              <button type="button" id="results-sort">Sort</button>
+              <button type="button" id="results-new-search">New Search</button>
+              <button type="button" id="results-prev-btn">Prev</button>
+              <button type="button" id="results-next-btn">Next</button>
+            </div>
           <div id='results-container'>
-          </div>
-          <div id="results-button-ctr">
-            <button type="button" id="results-filter">Filter</button>
-            <button type="button" id="results-sort">Sort</button>
-            <button type="button" id="results-new-search">New Search</button>
-            <button type="button" id="results-prev-btn">Prev</button>
-            <button type="button" id="results-next-btn">Next</button>
+            <!--populated by JS-->
           </div>
         </div>
       </main>
     </header>
   </body>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="./app.js"></script>
     <script src="./render.js"></script>
+    <script src="./app.js"></script>
   </body>
 </html>
