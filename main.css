@@ -1,4 +1,5 @@
 * {
+  font-family: Arial;
   font-size: 16px;
   margin: 0;
   padding: 0;
@@ -6,9 +7,11 @@
 
 h1 {
   font-size: 20px;
+  margin: 15px 0;
 }
 h2, h3 {
   font-size: 18px;
+  margin: 10px 0;
 }
 .panel {
   margin-bottom: 100px;
@@ -47,6 +50,52 @@ img {
   overflow: none;
 }
 
+.results-recipe-details-brief{
+  text-align: left;
+  font-size: 12px;
+}
+
+.results-recipe-details-brief li{
+  padding-bottom: 6px;
+}
+
 .results-recipe-list {
   font-size: 12px;
+}
+
+.btn-selected{
+  background-color: #7fde59;
+}
+
+ul {
+  list-style-type: none;
+  margin: 20px 0;
+}
+
+button {
+  width: 120px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #262626;
+  background-color: #c0c0c0;
+}
+
+#recipe-of-the-day{
+  width: 100%;
+  margin-top: 50px;
+}
+#recipe-of-the-day .col-9,
+#recipe-of-the-day .col-3{
+  width: 50%;
+}
+
+button, input{
+  height: 26px;
+  border-width: 3px;
+}
+
+#results-next-btn, #results-prev-btn {
+  background-color: #95cde4;
 }

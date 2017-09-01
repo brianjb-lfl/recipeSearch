@@ -19,7 +19,6 @@
             <button type="button" id='get-adv-search'>Adv Search</button>
           </form>
           <div id='recipe-of-the-day'>
-            <img src="http://s.eatthis-cdn.com/media/images/ext/842849976/greasy-fast-food.jpg"/>
           </div>
         </div>
 
@@ -29,28 +28,30 @@
               <input id='adv-search-input-term'>
                 <button type="button" id="add-ingredient-button">Add</button><!--activate later-->
                 <button type="button" id="exclude-ingredient-button">Exclude</button>
-              </input>
+              </input><br><br>
+              <label for "adv-search-diet">Diet Rest</label>
               <select name="adv-search-diet" id='adv-search-input-diet'><label for="adv-search-diet">Diet</label>
                     <option>none</option>
                     <option>Balanced</option>
                     <option>High-Fiber</option>
                     <option>High-Protein</option>
               </select>
+              <label for "adv-search-health">Health Plan</label>
               <select name="adv-search-health" id='adv-search-input-health'><label for="adv-search-health">Health</label>
                 <option>none</option>
                 <option>Peanut-Free</option>
                 <option>Gluten-Free</option>
                 <option>Vegan</option>
-              </select>
+              </select><br><br>
               <input id='adv-search-input-cals'><label for="adv-search-input-cals">Calories</label></input>
               <button type="submit" id="submit-adv-search-button">Go Search</button>   
           </form>
         </div>
 
         <div class='panel hidden' id='search-results'>
-          <div id='search-results-header row'></div>
+          <div class='search-results-header row'></div>
             <div id="results-button-ctr">
-              <button type="button" id="results-filter">Filter</button>
+              <button type="button" id="results-filter">Vegetarian</button>
               <button type="button" id="results-sort">Sort</button>
               <button type="button" id="results-new-search">New Search</button>
               <button type="button" id="results-prev-btn">Prev</button>

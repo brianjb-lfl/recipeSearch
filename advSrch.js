@@ -71,7 +71,7 @@ function recSearch(data){
     }
   }                                               
 
-  if(STORE.results.length < (STORE.currPage * STORE.pageSize)) {
+  if(STORE.results.length < (STORE.apiItemsInCall)) {
     //console.log(STORE.results.length + ' results in STORE ... calling again');
     getResultsFromApi();
   }

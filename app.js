@@ -6,14 +6,17 @@ const API_KEY = '92dd621055244e3a5dad9c0b3e409002'; // later this should be secu
 
 const STORE = {
   results: [],
+  resultsCache: [],
   appState: 'genSrch', // options = genSrch, advSrch, results
+  resState: 'filter-off',         // filter-on, filter-off
+  listState: 'list',      // details, list
   srchIngred: [],
   srchHealthRest: '',
   srchDietRest: '',
   srchCalsLim: null,
   currPage: 1,
   pageSize: 5,
-  nextAPIItem: 0,       // 'from' value for next call under current search terms
+  nextAPIItem: 0,      // 'from' value for next call under current search terms
   apiItemsInCall: 5   // items to call at a time; 'to' value = nextAPIItem + apiItemsInCall - 1 
 };
 
@@ -38,11 +41,12 @@ const EL = {
 
   results: $('#search-results'), // overall panel
   resultsCntr: $('#results-container'), // where the list goes inside panel
-  resultHeader: $('#search-results-header'),
+  resultHeader: $('.search-results-header'),
   resFiltBtn: $('#results-filter'),
   resSortBtn: $('#results-sort'),
   resPrevBtn: $('#results-prev-btn'),
   resNextBtn: $('#results-next-btn'),
+  resSeeMoreBtn: $('.results-see-more-btn')
 };
 
 function resSort (prop) {
@@ -96,7 +100,7 @@ function resetStore(){
 function formatStoreHtml() {
   STORE.results.forEach((cv,idx)=>{
     STORE.results[idx].recipe.details = 
-      `<div class='results-recipe-details row hidden'>
+      `<div class='results-recipe-details row hidden' id='recipe-${idx}-details'>
         <h3 class='results-recipe-name'>${cv.recipe.label}</h3>
 
         <div class="col col-6">
@@ -126,15 +130,14 @@ function formatStoreHtml() {
       <div class='results-recipe-nutrTable col col-6'>
           <h6>Nutrition Information:</h6>${cv.recipe.nutrTable}
       </div><!--end results-recipe-nutrTable-->
-
+      <button type='button' class='results-see-more-btn'>close</button> 
     </div><!--end results-recipe-list-->`;
   
-  STORE.results[idx].recipe.htmlList =
-    `<div class='results-recipe-list row'>
+    STORE.results[idx].recipe.htmlList =
+    `<div class='results-recipe-list row' id='recipe-${idx}-lst'>
       <h3 class='results-recipe-name'>${cv.recipe.label}</h3>
 
       <div class='col col-3'>
-        <p>Serves ${cv.recipe.yield}</p>
         <div class='results-recipe-thumbnail-container'>
           <a href="${cv.recipe.url}" target="_blank"><img src="${cv.recipe.image}"/></a>
         </div> 
@@ -143,6 +146,7 @@ function formatStoreHtml() {
       <div class='results-recipe-details-brief col col-9'>
         <div class='results-recipe-cals-brief'>
           <p>${cv.recipe.calsServing} calories per serving</p>
+          <p>Serves ${cv.recipe.yield}</p>
         </div>
         <div class='results-recipe-ingredients'>
           <ul class='results-recipe-ingredients'>
@@ -150,7 +154,7 @@ function formatStoreHtml() {
             ${cv.recipe.ingredientLi[1]}
             ${cv.recipe.ingredientLi[2]}
            </ul>
-          <p class='seeMore'>...see more</p>        
+          <button type='button' class='results-see-more-btn' id='recipe-${idx}'>see more</button>        
         </div><!--end results-recipe-ingredients-->
       </div><!--end results-recipe-details-brief-->
 
@@ -167,7 +171,8 @@ function preformatStore(){
     // STORE.results[idx].recipe.nutrition = {};
     for (let prop in cv.recipe.totalDaily) {
       STORE.results[idx].recipe.totalDaily[prop].labelNutr = STORE.results[idx].recipe.totalNutrients[prop].label;
-      STORE.results[idx].recipe.totalDaily[prop].quantityNutr = STORE.results[idx].recipe.totalNutrients[prop].quantity;
+      STORE.results[idx].recipe.totalDaily[prop].quantityNutr = Math.round(STORE.results[idx].recipe.totalNutrients[prop].quantity,2);
+      STORE.results[idx].recipe.totalDaily[prop].quantity = Math.round(STORE.results[idx].recipe.totalDaily[prop].quantity,2);
       STORE.results[idx].recipe.totalDaily[prop].unitNutr = STORE.results[idx].recipe.totalNutrients[prop].unit;
     }
     // convert nutritiion into an html table
@@ -189,7 +194,7 @@ function preformatStore(){
     STORE.results[idx].recipe.healthLi = cv.recipe.healthLabels.map((x,idx) => `<li>${cv.recipe.healthLabels[idx]}</li>`);
     STORE.results[idx].recipe.dietLi = cv.recipe.dietLabels.map((x,idx) => `<li>${cv.recipe.dietLabels[idx]}</li>`);
     STORE.results[idx].recipe.cautionsLi = cv.recipe.cautions.map((x,idx) => `<li>${cv.recipe.cautions[idx]}</li>`);
-    STORE.results[idx].recipe.calsServing = cv.recipe.calories/cv.recipe.yield;
+    STORE.results[idx].recipe.calsServing = Math.round(cv.recipe.calories/cv.recipe.yield*100)/100;
   }); // end map
 }
 
@@ -239,7 +244,6 @@ function getRecipeOfDay() {
 // 3 CALLED FROM 2 watchSubmit() >>> RECEIVE QUERY & CALLBACK FUNCTION 4
 
 function getResultsFromApi() { // searching ONLY by ingredients b/c other API searches are buggy. Using other search criteria in filter vs. in search.
-  console.log(STORE.srchIngred[0].ingred);
   const query = {
     q: STORE.srchIngred[0].ingred,
     app_id: API_ID,
@@ -323,20 +327,29 @@ function watchSubmit() {
   });
 
   EL.resPrevBtn.on('click', event => {
-    if(STORE.currPage > 0){
-      STORE.currPage -= 1;
-      render();
-    }
+    STORE.currPage -= 1;
+    render();
+
   });
   
+  EL.resultsCntr.on('click', '.results-see-more-btn', function(event) {
+    if(STORE.listState === 'list'){
+      STORE.listState = 'details';
+      let selItm = $(this).attr('id');
+      let trgItm = selItm + '-details';
+      $(`#${trgItm}`).removeClass('hidden');
+    }
+    else{
+      STORE.listState = 'list';
+      $('.results-recipe-details').addClass('hidden');
+    }
+
+
+  });
+
   EL.resNextBtn.on('click', event => {
     STORE.currPage += 1;
-    if(STORE.results.length < (STORE.currPage * STORE.pageSize)) {
-      getResultsFromApi();
-    }
-    else {
-      render();
-    }
+    render();
   });
 
   EL.advSrchBtn.click(event=>{
@@ -345,6 +358,7 @@ function watchSubmit() {
   });
   
   EL.resNewSrchBtn.click(event=>{
+    console.log('new search clicked');
     STORE.appState = 'genSrch';
     resetStore();
     render();
@@ -354,9 +368,23 @@ function watchSubmit() {
     resSort('label'); // edit this so that the property is read from the button or a checkbox
     render();
   });
-  EL.resFiltBtn.click(event=>{
+
+  EL.resFiltBtn.click(event=>{                      // currently set for one filter at a time
     STORE.resultsPage = 1;
-    resFilt('label', 'Lemon Confit', 'includes'); // edit this so that the property is read from the button or a checkbox
+    console.log('button click');
+    if(STORE.resState === 'filter-off'){
+      STORE.resState = 'filter-on';
+      console.log(STORE);
+      STORE.resultsCache = STORE.results.slice();
+      console.log(STORE);
+      resFilt('healthLabels', 'Vegetarian', 'includes'); // edit this so that the property is read from the button or a checkbox
+    }
+    else{
+      STORE.resState = 'filter-off';
+      STORE.results = STORE.resultsCache.slice();
+      //STORE.resultsCache = [];
+    }
+    EL.resFiltBtn.toggleClass('btn-selected');    
     render();
   });
 }
