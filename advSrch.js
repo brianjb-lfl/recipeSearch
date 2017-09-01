@@ -2,27 +2,24 @@
 
 function recSearch(data){
   
-  console.log(data.hits);
+  //console.log(data.hits);
+  console.log('adv search running');
 
   let loadItem;
   let ingredTerm;
   let ingredCase;
   
   for (let idx = 0; idx < data.hits.length; idx++){
-    console.log('for idx loop L 12');
     loadItem = true;
     ingredTerm = '';
     ingredCase = false;
     if(STORE.srchIngred.length > 1){
-      console.log('if ingred loop - L 16');
       for(let i = 1; i < STORE.searchTable.ingTerms.length; i++){
-        console.log('begin looping STORE ingred terms');
         ingredTerm = STORE.srchIngred[i].ingred.toLowerCase();
         ingredCase = STORE.srchIngred[i].ingOmit;
         
         for (let j = 0; j < data.hits[idx].recipe.ingredients.length; i++){
           let foundIngred = false;
-          console.log('begin looping ingred in recipe')
           if (data.hits[idx].recipe.ingredients[j].text.toLowerCase.indexOf(ingredTerm)>0) {
             foundIngred = true;
           }
@@ -46,13 +43,10 @@ function recSearch(data){
     }
     
     if(loadItem && STORE.srchDietRest!==''){
-      console.log('checking diet Labels');
       if(!data.hits[idx].recipe.dietLabels.find( dL => dL.toLowerCase() === STORE.srchDietRest.toLowerCase())){
-        console.log('d label not found, setting lI to false')
         loadItem = false;
       }
       else if(data.hits[idx].recipe.dietLabels.length === 0){
-        console.log('there are no diet labels, setting lI to false')
         loadItem = false;
       }
     }
@@ -68,8 +62,14 @@ function recSearch(data){
     }
   }                                               
 
-render();
-
+  if(STORE.results.length < (STORE.currPage * STORE.pageSize)) {
+    console.log(STORE.results.length + ' results in STORE ... calling again');
+    getResultsFromApi();
+  }
+  else {
+    STORE.appState = 'results';
+    render();
+  }
 }                                               
 
 // ADD TO RENDER

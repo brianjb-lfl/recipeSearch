@@ -12,6 +12,7 @@ const STORE = {
   srchDietRest: '',
   srchCalsLim: null,
   currPage: 1,
+  pageSize: 10,
   nextAPIItem: 0,       // 'from' value for next call under current search terms
   apiItemsInCall: 5   // items to call at a time; 'to' value = nextAPIItem + apiItemsInCall - 1 
 };
@@ -47,14 +48,6 @@ function resSort () {
   
 }
 
-function resPrev () {
-  
-}
-
-function resNext () {
-  
-}
-
 // get advanced search data from drop-down menu options
 // select.options[select.selectedIndex].value)
 
@@ -69,6 +62,7 @@ function getResultsFromApi() {
     to: (STORE.nextAPIItem + STORE.apiItemsInCall),
   };
   $.getJSON(SEARCH_URL, query, recSearch);
+  STORE.nextAPIItem += STORE.apiItemsInCall;
 };
 
 // 2 APPLY EVENT LISTENERS TO DOM
@@ -112,34 +106,50 @@ function watchSubmit() {
   EL.advSrchFrm.submit(event => {
     event.preventDefault();
     
-    if(STORE.srchIngred.length = 0){
+    if(STORE.srchIngred.length == 0){
       alert('ERROR:  You must add at least one item to your search');
     }
     else{
 
-      //console.log(EL.advSrchDiet.val());
-      if(EL.advSrchDiet !== 'none'){
-        STORE.srchDietRest = EL.advSrchDiet.val().toLowerCase;
+      if(EL.advSrchDiet.val() !== 'none'){
+        STORE.srchDietRest = EL.advSrchDiet.val().toLowerCase();
       }
 
-      //console.log(EL.advSrchHealth.val());
-      if(EL.advSrchHealth !== 'none'){
-        STORE.srchHealthRest = EL.advSrchHealth.val().toLowerCase;
+      if(EL.advSrchHealth.val() !== 'none'){
+        STORE.srchHealthRest = EL.advSrchHealth.val().toLowerCase();
       }
 
-      //console.log(EL.advSrchCals.val());
-      if(EL.advSrchCals > 0){
+      if(EL.advSrchCals.val() > 0){
         STORE.srchCalsLim = EL.advSrchCals.val();
       }
 
-    //   STORE.appState = 'results';
+      STORE.appState = 'results';
 
-    //   EL.advSrchInput.val(''); 
-    //   EL.advSrchDiet.val('none');
-    //   EL.advSrchHealth.val('none');
-    //   EL.advSrchCals.val('');
+      EL.advSrchInput.val(''); 
+      EL.advSrchDiet.val('none');
+      EL.advSrchHealth.val('none');
+      EL.advSrchCals.val('');
 
       getResultsFromApi();
+
+    }
+
+  });
+
+  EL.resPrevBtn.on('click', event => {
+    if(STORE.currPage > 0){
+      STORE.currPage -= 1;
+      render();
+    }
+  });
+  
+  EL.resNextBtn.on('click', event => {
+    STORE.currPage += 1;
+    if(STORE.results.length < (STORE.currPage * STORE.pageSize)) {
+      getResultsFromApi();
+    }
+    else {
+      render();
     }
   });
 
@@ -152,7 +162,7 @@ function watchSubmit() {
     STORE.appState = 'genSrch';
     // clear the store
     render();
-  })
+  });
 }
 
 // 1 DOCUMENT READY
