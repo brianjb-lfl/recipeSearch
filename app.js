@@ -5,8 +5,16 @@ const API_ID = '78cf2ab0';
 const API_KEY = '92dd621055244e3a5dad9c0b3e409002'; // later this should be secure
 
 const STORE = {
-  results: {},
-  appState: 'genSrch' // options = genSrch, advSrch, results
+  results: [],
+  appState: 'genSrch', // options = genSrch, advSrch, results
+  srchIngred: [],
+  srchHealthRest: '',
+  srchDietRest: '',
+  srchCalsLim: null,
+  currPage: 1,
+  pageSize: 5,
+  nextAPIItem: 0,       // 'from' value for next call under current search terms
+  apiItemsInCall: 5   // items to call at a time; 'to' value = nextAPIItem + apiItemsInCall - 1 
 };
 
 const EL = {
@@ -18,9 +26,11 @@ const EL = {
   ingredSrchInput: $('#add-ingredients'), 
   genSrchFrm: $('#gen-search-form'),
   advSrchBtn: $('#get-adv-search'),
+  addIngBtn: $('#add-ingredient-button'),
+  excIngBtn: $('#exclude-ingredient-button'),
   advSrch: $('#adv-search'),
   advSrchFrm: $('#adv-search-form'),
-  advSrchInput: $('#adv-search-input'),
+  advSrchInput: $('#adv-search-input-term'),
   advSrchDiet: $('#adv-search-input-diet'),
   advSrchHealth: $('#adv-search-input-health'),
   advSrchCals: $('#adv-search-input-cals'),
@@ -46,6 +56,7 @@ function resSort (prop) {
     }
   });
   render();
+  // save the app state as sorted
 }
 
 function resFilt (prop, value, comparison) {
@@ -65,21 +76,21 @@ function resFilt (prop, value, comparison) {
   } else {
     newArr = STORE.results.filter(item=>item.recipe[prop] === value);  
   }
-  STORE.results = newArr.slice();
+  // STORE.priorResults = the STORE.results;
+  // add button on screen to show filter is applied, check once more to remove (reverse that action)
+  // save the app state as filtered
+  STORE.results = newArr.slice(); // right now this edits the store, with no prior saved state; enhance: save prior state & allow restore
   render();
 }
 
-function resPrev () {
-  
-}
-
-function resNext () {
-  
-}  
-
 function resetStore(){
-  delete STORE.results;
-  delete STORE.query;
+  STORE.results = [];
+  STORE.query = [];
+  STORE.srchIngred = [];
+  STORE.srchHealthRest = '';
+  STORE.srchDietRest = '';
+  STORE.srchCalsLim = null;
+  STORE.nextAPIItem = 0;       // 'from' value for next call under current search terms
 } 
 
 function formatStoreHtml() {
@@ -210,24 +221,26 @@ function getRecipeOfDay() {
     q: topic[i],
     app_id: API_ID,
     app_key: API_KEY,
-    health: health[4],
-    from: 0,
-    to: 5
+    health: health[w],
+    from: d,
+    to: 8
   };
   $.getJSON(SEARCH_URL, query, loadRecipeOfDay);
 };
 
 // 3 CALLED FROM 2 watchSubmit() >>> RECEIVE QUERY & CALLBACK FUNCTION 4
-function getResultsFromApi(searchTerm, callback) {
+
+function getResultsFromApi() { // searching ONLY by ingredients b/c other API searches are buggy. Using other search criteria in filter vs. in search.
+  console.log(STORE.srchIngred[0].ingred);
   const query = {
-    q: searchTerm,
+    q: STORE.srchIngred[0].ingred,
     app_id: API_ID,
     app_key: API_KEY,
-    health: 'peanut-free',
-    from: 50,
-    to: 100
+    from: STORE.nextAPIItem,
+    to: (STORE.nextAPIItem + STORE.apiItemsInCall),
   };
-  $.getJSON(SEARCH_URL, query, callback);
+  $.getJSON(SEARCH_URL, query, recSearch);
+  STORE.nextAPIItem += STORE.apiItemsInCall;
 };
 
 // 2 APPLY EVENT LISTENERS TO DOM
@@ -235,31 +248,94 @@ function getResultsFromApi(searchTerm, callback) {
 function watchSubmit() {
   EL.genSrchFrm.submit(event => {
     event.preventDefault();
-    const queryTarget = $(event.currentTarget).find(EL.genSrchInput);
-    const query = queryTarget.val();
-    STORE.appState = 'results'; // change app state    
-    queryTarget.val(''); // clear out the input    
-    getResultsFromApi(query, loadResults); // >>>>> TO 3, PASS IN QUERY & FUNCTION
+    if(EL.genSrchInput.val()!==''){
+      STORE.srchIngred[0] = {};
+      STORE.srchIngred[0].ingred = EL.genSrchInput.val();
+      STORE.srchIngred[0].ingOmit = false;
+    }
+
+    EL.genSrchInput.val('');
+
+    STORE.appState = 'results'; 
+  
+    getResultsFromApi(); 
   });
+
+  EL.addIngBtn.on('click', event => { // only allow exclude once we have at least one ingredient via add. Once we hit 3, make the add button hide
+    let iCt = STORE.srchIngred.length;
+    if(EL.advSrchInput.val() !== ''){
+      STORE.srchIngred[iCt] = {};
+      STORE.srchIngred[iCt].ingred = EL.advSrchInput.val();
+      STORE.srchIngred[iCt].ingOmit = false;
+      EL.advSrchInput.val('');
+    }
+  });
+
+  EL.excIngBtn.on('click', event => {
+    let iCt = STORE.srchIngred.length;    
+    if(EL.advSrchInput.val() !== ''){
+      STORE.srchIngred[iCt] = {};
+      STORE.srchIngred[iCt].ingred = EL.advSrchInput.val();
+      STORE.srchIngred[iCt].ingOmit = true;
+      EL.advSrchInput.val('');
+    }
+  });
+
   EL.advSrchFrm.submit(event => {
     event.preventDefault();
-    const queryTargetTerm = $(event.currentTarget).find(EL.advSrchInput);
-    const queryTerm = queryTargetTerm.val();
-    const queryTargetDiet = $(event.currentTarget).find(EL.advSrchDiet);
-    const queryDiet = queryTargetDiet.val();
-    const queryTargetHealth = $(event.currentTarget).find(EL.advSrchHealth);
-    const queryHealth = queryTargetHealth.val();
-    const queryTargetCals = $(event.currentTarget).find(EL.advSrchCals);
-    const queryCals = queryTargetCals.val();
-    STORE.appState = 'results';
-    queryTargetTerm.val(''); // do this for all 4 fields !!!!!!!!!!!!!!!!!!
-    const query = {queryTerm, queryDiet, queryHealth, queryCals};
-    getResultsFromApi(query, loadResults); // >>>>> TO 3, PASS IN QUERY & FUNCTION
+    
+    if(STORE.srchIngred.length == 0){ // why won't === work here?
+      alert('ERROR:  You must add at least one item to your search');
+    }
+    else{
+
+      if(EL.advSrchDiet.val() !== 'none'){
+        STORE.srchDietRest = EL.advSrchDiet.val().toLowerCase();
+      }
+
+      if(EL.advSrchHealth.val() !== 'none'){
+        STORE.srchHealthRest = EL.advSrchHealth.val().toLowerCase();
+      }
+
+      if(EL.advSrchCals.val() > 0){
+        STORE.srchCalsLim = EL.advSrchCals.val();
+      }
+
+      STORE.appState = 'results';
+
+      EL.advSrchInput.val(''); 
+      EL.advSrchDiet.val('none');
+      EL.advSrchHealth.val('none');
+      EL.advSrchCals.val('');
+
+      getResultsFromApi();
+
+    }
+
   });
+
+  EL.resPrevBtn.on('click', event => {
+    if(STORE.currPage > 0){
+      STORE.currPage -= 1;
+      render();
+    }
+  });
+  
+  EL.resNextBtn.on('click', event => {
+    STORE.currPage += 1;
+    if(STORE.results.length < (STORE.currPage * STORE.pageSize)) {
+      getResultsFromApi();
+    }
+    else {
+      render();
+    }
+  });
+
   EL.advSrchBtn.click(event=>{
     STORE.appState = 'advSrch';
     render();
   });
+  
   EL.resNewSrchBtn.click(event=>{
     STORE.appState = 'genSrch';
     resetStore();
@@ -272,7 +348,7 @@ function watchSubmit() {
   });
   EL.resFiltBtn.click(event=>{
     STORE.resultsPage = 1;
-    resFilt('label', 'Lemon Pudding', 'includes'); // edit this so that the property is read from the button or a checkbox
+    resFilt('label', 'Lemon Confit', 'includes'); // edit this so that the property is read from the button or a checkbox
     render();
   });
 }

@@ -17,7 +17,12 @@ function renderResultsHeader(){
 
 function renderResults(){
   let html = '';
-  STORE.results.forEach(cv=>html += cv.recipe.htmlList);
+  let max = Math.min(STORE.currPage * STORE.pageSize, STORE.results.length);
+  for (let i = (STORE.currPage - 1)*STORE.pageSize; i < max; i++){
+    console.log(i);
+    html += STORE.results[i].recipe.htmlList;
+  }
+
   EL.resultsCntr.html(html);
 }
 
@@ -28,11 +33,6 @@ function render () {
   } else if (STORE.appState === 'results') {  
     renderResultsHeader();  
     renderResults();
-    // let html = '';
-    // STORE.results.map((cv,idx)=>{
-    //   html += `<li>${cv.recipe.label}</li>`;
-    // });
-    // EL.resultsCntr.html(html);
     EL.results.removeClass('hidden');
   } else { // appstate === genSrch
     renderRecipeOfDay();
