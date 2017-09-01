@@ -2,7 +2,8 @@
 
 function recSearch(data){
   
-  //console.log(data.hits);
+  // console.log('data from recSearch');
+  // console.log(data.hits);
   //console.log('adv search running');
 
   let loadItem;
@@ -64,8 +65,8 @@ function recSearch(data){
     
     //console.log('checking load status');
     if(loadItem){
-      console.log('load to store');
-      console.log(data.hits[idx]);
+      // console.log('load to store');
+      // console.log(data.hits[idx]);
       STORE.results.push(data.hits[idx]);
       STORE.query = data.params; // use a filter not to store app_id, app_key, sane...  
     }

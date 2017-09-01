@@ -1,8 +1,9 @@
 'use strict';
 
 const SEARCH_URL = 'https://api.edamam.com/search';
-const API_ID = '78cf2ab0';
-const API_KEY = '92dd621055244e3a5dad9c0b3e409002'; // later this should be secure
+const API_ID = '8bfe7b1c'; // Brian's 78cf2ab0';
+const API_KEY = '4e0beba3424268c0b8790e7900489e0f'; // brian's 92dd621055244e3a5dad9c0b3e409002'; // later this should be secure
+
 
 const STORE = {
   results: [],
@@ -17,7 +18,7 @@ const STORE = {
   currPage: 1,
   pageSize: 5,
   nextAPIItem: 0,      // 'from' value for next call under current search terms
-  apiItemsInCall: 5   // items to call at a time; 'to' value = nextAPIItem + apiItemsInCall - 1 
+  apiItemsInCall: 50   // items to call at a time; 'to' value = nextAPIItem + apiItemsInCall - 1 
 };
 
 const EL = {
