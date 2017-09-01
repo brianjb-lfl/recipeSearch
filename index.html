@@ -3,6 +3,7 @@
   <head>
     <title></title>
     <meta name="description" content="">
+    <link rel="stylesheet" type="text/css" href="./columns-float-grid.css">    
     <link rel="stylesheet" type="text/css" href="./main.css">
   </head>
   <body>
@@ -10,7 +11,7 @@
     </header>
       <main>
 
-        <div class='panel' id='search-main'>
+        <div class='panel row' id='search-main'>
           <h1>Search</h1>
           <form id='gen-search-form'>
             <input id='search-input'></input>
@@ -22,7 +23,7 @@
           </div>
         </div>
 
-        <div class='panel hidden' id='adv-search'>
+        <div class='panel row hidden' id='adv-search'>
           <h1>Advanced Search</h1>
           <form id='adv-search-form'>
               <input id='adv-search-input-term'>
@@ -47,7 +48,7 @@
         </div>
 
         <div class='panel hidden' id='search-results'>
-          <div id='search-results-header'></div>
+          <div id='search-results-header row'></div>
             <div id="results-button-ctr">
               <button type="button" id="results-filter">Filter</button>
               <button type="button" id="results-sort">Sort</button>
@@ -55,10 +56,10 @@
               <button type="button" id="results-prev-btn">Prev</button>
               <button type="button" id="results-next-btn">Next</button>
             </div>
+          </div>
           <div id='results-container'>
             <!--populated by JS-->
           </div>
-        </div>
       </main>
       
   </body>

@@ -96,46 +96,53 @@ function resetStore(){
 function formatStoreHtml() {
   STORE.results.forEach((cv,idx)=>{
     STORE.results[idx].recipe.details = 
-      `<div class='results-recipe-details'>
-      <h3 class='results-recipe-name'>${cv.recipe.label}</h3>
-      <p>Serves ${cv.recipe.yield}</p>
-      <div class='results-recipe-image-container'>
-        <a href="${cv.recipe.url}" target="_blank"><img src="${cv.recipe.image}"/></a>
-      </div> 
-      <div class='results-recipe-details-full'>
-        <div class='results-recipe-cals-brief'>
-          <h4>${cv.recipe.calsServing}</h4>
-          <p>per serving</p>
-        </div>
-        <div class='results-recipe-ingredients'>
-          <ul class='results-recipe-ingredients'>Ingredients:${cv.recipe.ingredientLi.join(' ')}</ul>
-        </div><!--end results-recipe-ingredients-->
-        <div class='results-recipe-health'>
-          <ul class='results-recipe-health'>Health Criteria:${cv.recipe.healthLi.join(' ')}</ul>
-        </div><!--end results-recipe-health-->
-        <div class='results-recipe-diet'>
-          <ul class='results-recipe-diet'>Dietary Restrictions:${cv.recipe.dietLi.join(' ')}</ul>
-        </div><!--end results-recipe-diet-->
-        <div class='results-recipe-cautions'>
-          <ul class='results-recipe-cautions'>Cautions:${cv.recipe.cautionsLi.join(' ')}</ul>
-        </div><!--end results-recipe-cautions-->
-        <div class='results-recipe-nutrTable'>
+      `<div class='results-recipe-details row hidden'>
+        <h3 class='results-recipe-name'>${cv.recipe.label}</h3>
+
+        <div class="col col-6">
+          <p>Serves ${cv.recipe.yield}</p>
+          <div class='results-recipe-image-container'>
+            <a href="${cv.recipe.url}" target="_blank"><img src="${cv.recipe.image}"/></a>
+          </div> 
+          <div class='results-recipe-details-full'>
+            <div class='results-recipe-cals-brief'>
+              <p>${cv.recipe.calsServing} calories per serving</p>
+            </div>
+            <div class='results-recipe-ingredients'>
+              <ul class='results-recipe-ingredients'>Ingredients:${cv.recipe.ingredientLi.join(' ')}</ul>
+            </div><!--end results-recipe-ingredients-->
+            <div class='results-recipe-health'>
+              <ul class='results-recipe-health'>Health Criteria:${cv.recipe.healthLi.join(' ')}</ul>
+            </div><!--end results-recipe-health-->
+            <div class='results-recipe-diet'>
+              <ul class='results-recipe-diet'>Dietary Restrictions:${cv.recipe.dietLi.join(' ')}</ul>
+            </div><!--end results-recipe-diet-->
+            <div class='results-recipe-cautions'>
+              <ul class='results-recipe-cautions'>Cautions:${cv.recipe.cautionsLi.join(' ')}</ul>
+            </div><!--end results-recipe-cautions-->
+          </div><!--end results-recipe-details-full-->
+      </div><!--end col-6>-->
+
+      <div class='results-recipe-nutrTable col col-6'>
           <h6>Nutrition Information:</h6>${cv.recipe.nutrTable}
-        </div><!--end results-recipe-nutrTable-->
-      </div><!--end results-recipe-details-full-->
+      </div><!--end results-recipe-nutrTable-->
+
     </div><!--end results-recipe-list-->`;
   
   STORE.results[idx].recipe.htmlList =
-    `<div class='results-recipe-list'>
+    `<div class='results-recipe-list row'>
       <h3 class='results-recipe-name'>${cv.recipe.label}</h3>
-      <p>Serves ${cv.recipe.yield}</p>
-      <div class='results-recipe-thumbnail-container'>
-        <a href="${cv.recipe.url}" target="_blank"><img src="${cv.recipe.image}"/></a>
-      </div> 
-      <div class='results-recipe-details-brief'>
-         <div class='results-recipe-cals-brief'>
-          <h4>${cv.recipe.calsServing}</h4>
-          <p>per serving</p>
+
+      <div class='col col-3'>
+        <p>Serves ${cv.recipe.yield}</p>
+        <div class='results-recipe-thumbnail-container'>
+          <a href="${cv.recipe.url}" target="_blank"><img src="${cv.recipe.image}"/></a>
+        </div> 
+      </div>
+
+      <div class='results-recipe-details-brief col col-9'>
+        <div class='results-recipe-cals-brief'>
+          <p>${cv.recipe.calsServing} calories per serving</p>
         </div>
         <div class='results-recipe-ingredients'>
           <ul class='results-recipe-ingredients'>
@@ -146,6 +153,7 @@ function formatStoreHtml() {
           <p class='seeMore'>...see more</p>        
         </div><!--end results-recipe-ingredients-->
       </div><!--end results-recipe-details-brief-->
+
       ${STORE.results[idx].recipe.details}
     </div><!--end results-recipe-list-->`;
     // not currently using cv.recipe.shareAs
