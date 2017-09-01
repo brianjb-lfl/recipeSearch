@@ -12,7 +12,7 @@ const STORE = {
   srchDietRest: '',
   srchCalsLim: null,
   currPage: 1,
-  pageSize: 10,
+  pageSize: 5,
   nextAPIItem: 0,       // 'from' value for next call under current search terms
   apiItemsInCall: 5   // items to call at a time; 'to' value = nextAPIItem + apiItemsInCall - 1 
 };

@@ -3,13 +3,14 @@
 function recSearch(data){
   
   //console.log(data.hits);
-  console.log('adv search running');
+  //console.log('adv search running');
 
   let loadItem;
   let ingredTerm;
   let ingredCase;
   
   for (let idx = 0; idx < data.hits.length; idx++){
+    //console.log('in ingred for loop');
     loadItem = true;
     ingredTerm = '';
     ingredCase = false;
@@ -17,13 +18,15 @@ function recSearch(data){
       for(let i = 1; i < STORE.searchTable.ingTerms.length; i++){
         ingredTerm = STORE.srchIngred[i].ingred.toLowerCase();
         ingredCase = STORE.srchIngred[i].ingOmit;
-        
+        let foundIngred;
+
         for (let j = 0; j < data.hits[idx].recipe.ingredients.length; i++){
-          let foundIngred = false;
+          foundIngred = false;
           if (data.hits[idx].recipe.ingredients[j].text.toLowerCase.indexOf(ingredTerm)>0) {
             foundIngred = true;
           }
         }
+
         if(foundIngred && STORE.srchIngred[i].ingOmit){
           loadItem = false;
         }
@@ -32,7 +35,8 @@ function recSearch(data){
         }
       }                                        
     }
-                                                  
+    
+    //console.log('running other tests');
     if(loadItem && STORE.srchHealthRest!==''){
       if(!data.hits[idx].recipe.healthLabels.find( hL => hL.toLowerCase() === STORE.srchHealthRest.toLowerCase())){
         loadItem = false;
@@ -56,17 +60,20 @@ function recSearch(data){
         loadItem = false;
       }
     }
-  
+    
+    //console.log('checking load status');
     if(loadItem){
+      //console.log('load to store');
       STORE.results.push(data.hits[idx]);
     }
   }                                               
 
   if(STORE.results.length < (STORE.currPage * STORE.pageSize)) {
-    console.log(STORE.results.length + ' results in STORE ... calling again');
+    //console.log(STORE.results.length + ' results in STORE ... calling again');
     getResultsFromApi();
   }
   else {
+    //console.log('have enough items, rendering');
     STORE.appState = 'results';
     render();
   }

@@ -7,7 +7,7 @@ function render () {
   } else if (STORE.appState === 'results') {    
     let html = '';
 
-    for (let i = (STORE.currPage - 1)*10; i < STORE.currPage * 10; i++){
+    for (let i = (STORE.currPage - 1)*STORE.pageSize; i < STORE.currPage * STORE.pageSize; i++){
 //    STORE.results.map((cv,idx)=>{
       html += `<li>${STORE.results[i].recipe.label}</li>`;
     }
